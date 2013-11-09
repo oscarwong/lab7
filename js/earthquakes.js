@@ -63,21 +63,40 @@ function addQuakeMarkers(quakes, map) {
     			position: new google.maps.LatLng(quake.location.latitude, quake.location.longitude)
 			});
 
-			google.maps.event.addListener(quake.mapMarker, 'click', function(){
-				if (gov.usgs.iw) {
-					gov.usgs.iw.close(map, this);
-				}
+			infoWindow = new google.maps.InfoWindow({
+				content: new Date(quake.datetime).toLocaleString() +
+							': magnitude ' + quake.magnitude + ' at dept of ' +
+							quake.depth + ' meters'
+			});
 
-				gov.usgs.iw = new google.maps.InfoWindow({
-					content: new Date(quake.datetime).toLocaleString() +
-					': magnitude ' + quake.magnitude + ' at a depth of ' +
-					quake.depth + ' meters'
-				});
+			registerInfoWindow(map, quake.mapMarker, infoWindow);
+
+			// google.maps.event.addListener(quake.mapMarker, 'click', function(){
+			// 	if (gov.usgs.iw) {
+			// 		gov.usgs.iw.close(map, this);
+			// 	}
+
+			// 	gov.usgs.iw = new google.maps.InfoWindow({
+			// 		content: new Date(quake.datetime).toLocaleString() +
+			// 		': magnitude ' + quake.magnitude + ' at a depth of ' +
+			// 		quake.depth + ' meters'
+			// 	});
 			
-			gov.usgs.iw.open(map, this);
-		});
+			// gov.usgs.iw.open(map, this);
+			// });
 		}
 	}
 
+}
+
+function registerInfoWindow(map, marker, infoWindow) {
+	google.maps.event.addListener(marker, 'click', function(){
+		if (gov.usgs.iw) {
+			gov.usgs.iw.close(map, marker);
+		}
+
+		gov.usgs.iw = infoWindow;
+		infoWindow.open(map, marker);
+	});
 }
 
